@@ -1,0 +1,15 @@
+[project]
+name = "air-quality"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "dotenv>=0.9.9",
+    "ipykernel>=7.2.0",
+    "matplotlib>=3.10.8",
+    "openaq>=0.7.0",
+    "pandas>=2.3.3",
+    "pyarrow>=23.0.1",
+    "seaborn>=0.13.2",
+]
