@@ -11,8 +11,8 @@ load_dotenv(override=True)
 
 API_KEY = os.getenv("OPENAQ_API_KEY")
 SAVE_TO_PATH = Path("data/data.parquet")
-LATITUDE = 48.1544376
-LONGITUDE = 11.2114821
+LATITUDE = float(os.getenv("LATITUDE"))
+LONGITUDE = float(os.getenv("LONGITUDE"))
 RADIUS = 5_000
 LIMIT = 20
 DT_FROM = datetime(2025, 3, 14)
