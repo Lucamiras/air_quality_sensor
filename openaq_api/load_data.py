@@ -1,8 +1,10 @@
 import os
 import time
-from datetime import datetime
-from pathlib import Path
+import pandas as pd
 
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+from pathlib import Path
 from dotenv import load_dotenv
 from openaq import OpenAQ
 from pandas import json_normalize
@@ -14,39 +16,46 @@ API_KEY = os.getenv("OPENAQ_API_KEY")
 SAVE_TO_PATH = Path("data/data.parquet")
 LATITUDE = float(os.getenv("LATITUDE"))
 LONGITUDE = float(os.getenv("LONGITUDE"))
-RADIUS = 5_000
+RADIUS = 500
 LIMIT = 20
-DT_FROM = datetime(2026, 1, 1)
-DT_TO = datetime(2026, 3, 21)
-PAGES = 43
+YEARS = list(range(2025, 2027, 1))
+MONTHS = list(range(1, 13, 1))
+SENSOR_NAME = "pm25"
+
+id = None
+df_list = []
 
 client = OpenAQ(api_key=API_KEY)
+
 locations = client.locations.list(
     coordinates=(LATITUDE, LONGITUDE),
     radius=RADIUS,
     limit=LIMIT,
 )
-loc_ids = [res.id for res in locations.results]
-locs = [client.locations.get(id) for id in loc_ids]
-ids = [sensor.id for loc in locs for result in loc.results for sensor in result.sensors]
 
-all_measurements = []
+for result in locations.results:
+    for sensor in result.sensors:
+        if sensor.name.startswith(SENSOR_NAME):
+            id = sensor.id
+            break
 
-for id in ids:
-    print("id", id, flush=True, end="-")
-    for page_num in range(1, PAGES, 1):
-        print("|", flush=True, end="")
+for year in YEARS:
+    for month in MONTHS:
+        date_from = datetime(year, month, 1)
+        date_to = date_from + relativedelta(months=1)
+        print(date_from)
+        if (year, month) == (2026, 3):
+            break
         measurements = client.measurements.list(
             sensors_id=id,
             data="hours",
-            datetime_from=DT_FROM,
-            datetime_to=DT_TO,
-            page=page_num,
+            datetime_from=date_from,
+            datetime_to=date_to
         )
-        all_measurements += measurements.dict()["results"]
-    time.sleep(20.0)
+        df_temp = json_normalize(measurements.dict()["results"])
+        df_list.append(df_temp)
 
-df = json_normalize(all_measurements)
+df = pd.concat(df_list).reset_index()
 df.to_parquet(SAVE_TO_PATH, index=False)
 
 client.close()
