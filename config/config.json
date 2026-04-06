@@ -1,0 +1,17 @@
+{
+    "latitude": 48.13725200011463,
+    "longitude": 11.564923999614544,
+    "radius": 500,
+    "limit": 20,
+    "sensor_name": "pm25",
+    "from_date": {
+        "year": 2026,
+        "month": 1,
+        "day": 1
+    },
+    "to_date": {
+        "year": 2026,
+        "month": 1,
+        "day": 3
+    }
+}
