@@ -13,5 +13,8 @@
         "year": 2026,
         "month": 2,
         "day": 1
-    }
+    },
+    "openaq_data_fp": "data/openaq.parquet",
+    "weather_data_fp": "data/openweather.parquet",
+    "merged_data_fp": "data/merged_data.parquet"
 }

@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 from tqdm import tqdm
 
-from config import load_config
+from src.config import load_config
 
 
 load_dotenv(override=True)
@@ -15,8 +15,7 @@ API_KEY = os.getenv("OPEN_WEATHER_MAP_API_KEY")
 
 
 def create_weather_dataset(
-        config_fg: str = "config/config.json",
-        save_to_df: str = "data/weather.parquet"
+        config_fg: str = "config/config.json"
 ) -> None:
     """Load OpenWeather data for the location and timestamp
     defined in the config.json file.
@@ -27,7 +26,7 @@ def create_weather_dataset(
     """
 
     cfg = load_config(Path(config_fg))
-    Path(save_to_df).parent.mkdir(exist_ok=True)
+    Path(cfg.weather_data_fp).parent.mkdir(exist_ok=True)
 
     if not cfg:
         raise FileNotFoundError("Configuration could not be loaded.")
@@ -72,7 +71,7 @@ def create_weather_dataset(
         records.append(response["data"][0])
 
     df = pd.DataFrame(records).reset_index()
-    df.to_parquet(Path(save_to_df), index=False)
+    df.to_parquet(Path(cfg.weather_data_fp), index=False)
 
 if __name__ == "__main__":
     create_weather_dataset()

@@ -8,17 +8,14 @@ from dotenv import load_dotenv
 from openaq import OpenAQ
 from pandas import json_normalize
 
-from config import load_config
+from src.config import load_config
 
 
 load_dotenv(override=True)
 
 API_KEY = os.getenv("OPENAQ_API_KEY")
 
-def create_openaq_dataset(
-        config_fp: str = "config/config.json",
-        save_to_df: str = "data/data.parquet"
-        ) -> None:
+def create_openaq_dataset(config_fp: str = "config/config.json") -> None:
     """Load OpenAQ data for the location and timestamp
     defined in the config.json file.
 
@@ -28,7 +25,7 @@ def create_openaq_dataset(
     """
 
     cfg = load_config(Path(config_fp))
-    Path(save_to_df).parent.mkdir(exist_ok=True)
+    Path(cfg.openaq_data_fp).parent.mkdir(exist_ok=True)
 
     if not cfg:
         raise FileNotFoundError("Configuration could not be loaded.")
@@ -73,7 +70,7 @@ def create_openaq_dataset(
             df_list.append(df_temp)
 
     df = pd.concat(df_list).reset_index()
-    df.to_parquet(Path(save_to_df), index=False)
+    df.to_parquet(Path(cfg.openaq_data_fp), index=False)
 
     client.close()
 

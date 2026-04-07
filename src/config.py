@@ -19,6 +19,9 @@ class Config(BaseModel):
     sensor_name: str
     from_date: Date
     to_date: Date
+    openaq_data_fp: str
+    weather_data_fp: str
+    merged_data_fp: str
 
 
 def load_config(config_fp: Path) -> Config:
