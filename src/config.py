@@ -41,6 +41,7 @@ def load_config(config_fp: Path) -> Config:
         print("Error occured:")
         print(e)
 
+
 def _dates_valid(date_1: Date, date_2: Date) -> bool:
     """Check if from_date and to_date allow for a valid date range.
 
@@ -51,10 +52,20 @@ def _dates_valid(date_1: Date, date_2: Date) -> bool:
     Returns:
         bool: True if dates are valid, else False
     """
-    date_1 = datetime.datetime(
-        date_1.year, date_1.month, date_1.day
-    )
-    date_2 = datetime.datetime(
-        date_2.year, date_2.month, date_2.day
-    )
-    return date_1 < date_2
+    try:
+        date_1 = datetime.datetime(date_1.year, date_1.month, date_1.day)
+
+        date_2 = datetime.datetime(date_2.year, date_2.month, date_2.day)
+
+    except ValueError as e:
+        print(f"Error parsing dates: {e}")
+
+    dates_valid = True
+    
+    if date_1 >= date_2:
+        dates_valid = False
+    
+    if (date_1 or date_2) < datetime.datetime(1970, 1, 1):
+        dates_valid = False 
+
+    return dates_valid
