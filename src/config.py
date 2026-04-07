@@ -1,3 +1,4 @@
+import datetime
 import json
 from pathlib import Path
 from pydantic import BaseModel, ConfigDict
@@ -33,7 +34,27 @@ def load_config(config_fp: Path) -> Config:
         with open(config_fp, "r") as f:
             json_content = json.loads(f.read())
             validated_model = Config.model_validate(json_content)
+            if not _dates_valid(validated_model.from_date, validated_model.to_date):
+                raise Exception("'from' and 'to' dates do not allow for valid range.")
             return validated_model
     except Exception as e:
         print("Error occured:")
         print(e)
+
+def _dates_valid(date_1: Date, date_2: Date) -> bool:
+    """Check if from_date and to_date allow for a valid date range.
+
+    Args:
+        date_1 (datetime.datetime): from_date
+        date_2 (datetime.datetime): to_date
+
+    Returns:
+        bool: True if dates are valid, else False
+    """
+    date_1 = datetime.datetime(
+        date_1.year, date_1.month, date_1.day
+    )
+    date_2 = datetime.datetime(
+        date_2.year, date_2.month, date_2.day
+    )
+    return date_1 < date_2
