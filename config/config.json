@@ -5,7 +5,7 @@
     "limit": 20,
     "sensor_name": "pm25",
     "from_date": {
-        "year": 2026,
+        "year": 2020,
         "month": 1,
         "day": 1
     },

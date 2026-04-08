@@ -33,7 +33,7 @@ def create_openaq_dataset(config_fp: str = "config/config.json") -> None:
     if not API_KEY:
         raise ValueError("Missing API key!")
 
-    years = list(range(cfg.from_date.year, cfg.from_date.year + 1, 1))
+    years = list(range(cfg.from_date.year, cfg.to_date.year + 1, 1))
     months = list(range(1, 13, 1))
     
     id = None
