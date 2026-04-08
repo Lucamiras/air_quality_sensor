@@ -38,6 +38,7 @@ def create_merged_dataset(
     
     openaq_data = pd.read_parquet(Path(cfg.openaq_data_fp))
     openweather_data = pd.read_parquet(Path(cfg.weather_data_fp))
+    print(openaq_data.shape, openweather_data.shape)
 
     openaq_data["timestamp"] = pd.to_datetime(
         openaq_data["coverage.datetime_from.utc"],
@@ -50,18 +51,41 @@ def create_merged_dataset(
             tz=datetime.timezone.utc)
             )
 
-    merged_data = pd.merge(
+    date_range = pd.DataFrame(
+        {
+            "timestamp": pd.date_range(
+                start=datetime.datetime(
+                    cfg.from_date.year,
+                    cfg.from_date.month,
+                    cfg.from_date.day),
+                end=datetime.datetime(
+                    cfg.to_date.year,
+                    cfg.to_date.month,
+                    cfg.to_date.day),
+                freq="1h",
+                tz=datetime.timezone.utc
+            )
+        }
+    )
+    print(date_range.shape)
+
+    openaq_on_timestamp = pd.merge(
+        date_range,
         openaq_data,
+        how="left",
+        on="timestamp"
+    )
+
+    merged_data = pd.merge(
+        openaq_on_timestamp,
         openweather_data,
-        how="right",
-        on="timestamp",
-        left_index=False,
-        right_index=False
+        how="left",
+        on="timestamp"
     )
 
     merged_data = merged_data[[
         'value', 'timestamp', 'temp', 'feels_like', 'pressure',
-        'humidity', 'dew_point', 'clouds', 'wind_speed', 'wind_deg',
+        'humidity', 'dew_point', 'wind_speed', 'wind_deg',
         'wind_gust'
         ]]
     
