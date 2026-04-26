@@ -32,6 +32,5 @@ The target is a negatively shifted pm25. This allows the model to learn how the 
 We observe some lag, indicating that the model is purely considering the past pm25 values. Feature importance supports this.
 
 # TODOs:
-- More data: Currently, the model only has 3 months of data from 2026.
-- Better features: Include wind, pressure, weather
-- Tuning: Use Optuna for hyperparameter search
+I need to include forecasted weather.
+Having upwind and downwind weather 
