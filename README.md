@@ -1,33 +1,33 @@
-# Project Summary
-Forecast air quality using a low-cost sensor.
-# Data
-Pre-training on: OpenQA Dataset using the Python SDK by OpenQA
-# Feature engineering
+# Project AirCast: Low-Cost PM2.5 Forecasting
+## Summary
+AirCast is a machine learning project with the aim of forecasting particulate matter (PM2.5) conentrations using low-cost sensor data. By integrating historical air quality measurements from the **OpenAQ** platform combined with meteorological variables, the model aims to provide actionable 3-hour and 6-hour ahead forecasts.
+## Data Architecture
+### Sensor data (OpenAQ)
+I utilize the OpenAQ Python SDK to ingest high-frequency PM2.5 data. While the sensors provide PM1 and others, PM2.5 is as the primary target.
+For this prototype, I am using one location from the center of Munich, Germany.
+### Feature engineering
 We generate time series features in categories:
-## Sensor data (OpenAQ API):
-Sensors offer pm1, pm25, u003 values, but they are all heavily correlated, so I focus on one of them: pm25
-## Date features (Pandas datetime)
-- year
-- month
-- day_of_week
-- is_weekend
-- is_holiday
-- hour_of_day
-- sin / cos representations
-## Rolling & lag
-To allow the model to know more about the past, we include rolling and lag features.
-- Rolling mean 12h
-- Lag 3h | 6h | 9h | 12h
-## Environmental (various APIs)
-Initial experiments show that the base features available through the OpenAQ API (humidity and temperature) hold little explanatory power. The vast majority of forecasting accuracy comes from the lag features, and performance drops drastically as lead time increases. Therefore, I will consider the following other features:
-- Wind speed
-- Wind direction
-- Barometric pressure
-- Rain
-# Target
+- Date features (Pandas datetime)
+    - year
+    - month
+    - day_of_week
+    - is_weekend
+    - is_holiday
+    - hour_of_day
+    - sin / cos representations
+- Rolling & lag
+    - Rolling mean 12h
+    - Lag 3h | 6h | 9h | 12h
+- Environmental (various APIs)
+    - Wind speed
+    - Wind direction
+    - Barometric pressure
+    - Rain
+# Modelling
+## Target
 The target is a negatively shifted pm25. This allows the model to learn how the pm25 values is different in the future.
-# Experiments
-## Number 1: Ridge regression, basic features, 3 hours lead
+## Experiments
+### Number 1: Ridge regression, basic features, 3 hours lead
 ![image](./images/3hr_lead_ridge.png)
 We observe some lag, indicating that the model is purely considering the past pm25 values. Feature importance supports this.
 
